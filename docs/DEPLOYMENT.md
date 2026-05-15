@@ -1,9 +1,10 @@
-# Terraform: Iwaki AI bot on Oracle Cloud (Always Free)
+# Deployment (Oracle Cloud + Terraform)
 
-Stands up a single Ampere A1.Flex VM in your OCI tenancy, generates an
-SSH keypair on the fly, opens port 22 to the world (by default), and
-cloud-inits the bot so that it self-installs, drops the env file, and
-enables the systemd unit.
+The Terraform module in [`terraform/`](../terraform/) stands up a
+single Ampere A1.Flex VM in your OCI tenancy, generates an SSH
+keypair on the fly, opens port 22 to the world (by default), and
+cloud-inits the bot so that it self-installs, drops the env file,
+and enables the systemd unit.
 
 Bot/AI secrets (Discord token, Gemini key) live in `secrets.enc.yaml`,
 which is SOPS-encrypted with age so the file is safe to commit. OCI
