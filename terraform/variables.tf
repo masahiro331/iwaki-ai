@@ -21,19 +21,21 @@ variable "compartment_ocid" {
 }
 
 variable "instance_shape" {
-  description = "OCI compute shape"
+  description = "OCI compute shape. E2.1.Micro is the AMD Always Free tier; A1.Flex is the Ampere ARM Always Free tier (often out of capacity in ap-tokyo)."
   type        = string
-  default     = "VM.Standard.A1.Flex"
+  default     = "VM.Standard.E2.1.Micro"
 }
 
+# Only honored by Flex shapes (e.g. VM.Standard.A1.Flex). The fixed
+# E2.1.Micro ignores these.
 variable "instance_ocpus" {
-  description = "Number of OCPUs (Flex shapes only)"
+  description = "Number of OCPUs (Flex shapes only; ignored for E2.1.Micro)"
   type        = number
   default     = 1
 }
 
 variable "instance_memory_gb" {
-  description = "Memory in GB (Flex shapes only)"
+  description = "Memory in GB (Flex shapes only; ignored for E2.1.Micro)"
   type        = number
   default     = 6
 }

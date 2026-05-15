@@ -45,9 +45,14 @@ resource "oci_core_instance" "bot" {
   display_name        = var.instance_name
   shape               = var.instance_shape
 
-  shape_config {
-    ocpus         = var.instance_ocpus
-    memory_in_gbs = var.instance_memory_gb
+  # Only Flex shapes accept shape_config; fixed shapes like
+  # E2.1.Micro reject it. endswith catches A1.Flex, E3.Flex, etc.
+  dynamic "shape_config" {
+    for_each = endswith(var.instance_shape, ".Flex") ? [1] : []
+    content {
+      ocpus         = var.instance_ocpus
+      memory_in_gbs = var.instance_memory_gb
+    }
   }
 
   source_details {
