@@ -16,6 +16,26 @@ func TestParseFlags_Defaults(t *testing.T) {
 	if cfg.since != 24*time.Hour {
 		t.Errorf("since default = %v, want 24h", cfg.since)
 	}
+	if cfg.llm != llmClaudeCode {
+		t.Errorf("llm default = %q, want %q", cfg.llm, llmClaudeCode)
+	}
+}
+
+func TestParseFlags_LLMAPI(t *testing.T) {
+	cfg, err := parseFlags([]string{"--channel", "x", "--llm", "api"})
+	if err != nil {
+		t.Fatalf("parseFlags error = %v", err)
+	}
+	if cfg.llm != llmAPI {
+		t.Errorf("llm = %q, want %q", cfg.llm, llmAPI)
+	}
+}
+
+func TestParseFlags_InvalidLLM(t *testing.T) {
+	_, err := parseFlags([]string{"--channel", "x", "--llm", "gpt"})
+	if err == nil {
+		t.Fatal("expected error on unknown --llm value")
+	}
 }
 
 func TestParseFlags_CustomSince(t *testing.T) {

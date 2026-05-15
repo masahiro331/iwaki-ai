@@ -28,9 +28,10 @@ func run(args []string) error {
 	if botToken == "" {
 		return errors.New("DISCORD_BOT_TOKEN env var is required")
 	}
-	apiKey := os.Getenv("ANTHROPIC_API_KEY")
-	if apiKey == "" {
-		return errors.New("ANTHROPIC_API_KEY env var is required")
+
+	llm, err := buildLLM(cfg.llm)
+	if err != nil {
+		return err
 	}
 
 	api, err := discord.NewDiscordgoAPI(botToken)
@@ -39,7 +40,7 @@ func run(args []string) error {
 	}
 	fetcher := discord.NewFetcher(api)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 
 	since := time.Now().Add(-cfg.since)
@@ -52,7 +53,6 @@ func run(args []string) error {
 		return nil
 	}
 
-	llm := summarizer.NewClaudeClient(apiKey)
 	s := summarizer.New(llm)
 
 	summary, err := s.Summarize(ctx, msgs)
