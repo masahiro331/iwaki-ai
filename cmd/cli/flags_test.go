@@ -117,3 +117,41 @@ func TestParseFlags_NegativeSince(t *testing.T) {
 		t.Fatal("expected error on negative since")
 	}
 }
+
+func TestParseFlags_SinceExceedsDefaultMax(t *testing.T) {
+	// Default max-since is 168h. 200h should be rejected unless overridden.
+	_, err := parseFlags([]string{"--channel", "x", "--since", "200h"})
+	if err == nil {
+		t.Fatal("expected error when --since exceeds default --max-since")
+	}
+}
+
+func TestParseFlags_MaxSinceOverride(t *testing.T) {
+	cfg, err := parseFlags([]string{"--channel", "x", "--since", "200h", "--max-since", "300h"})
+	if err != nil {
+		t.Fatalf("parseFlags error = %v", err)
+	}
+	if cfg.since != 200*time.Hour {
+		t.Errorf("since = %v, want 200h", cfg.since)
+	}
+}
+
+func TestParseFlags_MaxInputCharsDefault(t *testing.T) {
+	cfg, err := parseFlags([]string{"--channel", "x"})
+	if err != nil {
+		t.Fatalf("parseFlags error = %v", err)
+	}
+	if cfg.maxInputChars != 100000 {
+		t.Errorf("maxInputChars default = %d, want 100000", cfg.maxInputChars)
+	}
+}
+
+func TestParseFlags_MaxInputCharsOverride(t *testing.T) {
+	cfg, err := parseFlags([]string{"--channel", "x", "--max-input-chars", "5000"})
+	if err != nil {
+		t.Fatalf("parseFlags error = %v", err)
+	}
+	if cfg.maxInputChars != 5000 {
+		t.Errorf("maxInputChars = %d, want 5000", cfg.maxInputChars)
+	}
+}

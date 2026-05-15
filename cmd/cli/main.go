@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/masahiro331/discord-ai/internal/discord"
+	"github.com/masahiro331/discord-ai/internal/message"
 	"github.com/masahiro331/discord-ai/internal/summarizer"
 )
 
@@ -51,6 +52,12 @@ func run(args []string) error {
 	if len(msgs) == 0 {
 		fmt.Println("(no messages in the given window)")
 		return nil
+	}
+
+	formattedLen := len(message.FormatAll(msgs))
+	if formattedLen > cfg.maxInputChars {
+		return fmt.Errorf("formatted input is %d chars, exceeds --max-input-chars %d; narrow --since or raise --max-input-chars",
+			formattedLen, cfg.maxInputChars)
 	}
 
 	s := summarizer.New(llm)
