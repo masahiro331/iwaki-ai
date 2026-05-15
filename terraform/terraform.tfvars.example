@@ -1,0 +1,23 @@
+# Copy to terraform.tfvars and fill in. terraform.tfvars is gitignored.
+
+# --- OCI authentication (same fields as ~/.oci/config) ---
+tenancy_ocid     = "ocid1.tenancy.oc1..xxx"
+user_ocid        = "ocid1.user.oc1..xxx"
+fingerprint      = "aa:bb:cc:..."
+private_key_path = "~/.oci/oci_api_key.pem"
+region           = "ap-tokyo-1"
+
+# Optional: leave blank to drop resources into the root compartment.
+# compartment_ocid = "ocid1.compartment.oc1..xxx"
+
+# --- Bot secrets (end up in /etc/iwaki-ai/iwaki-ai.env on the VM) ---
+discord_bot_token = ""
+discord_guild_id  = ""
+gemini_api_key    = ""
+
+# --- Optional overrides ---
+# ssh_ingress_cidr     = "203.0.113.4/32"
+# instance_ocpus       = 1
+# instance_memory_gb   = 6
+# ssh_private_key_path = "~/.ssh/iwaki-ai"
+# github_repo          = "masahiro331/iwaki-ai"
