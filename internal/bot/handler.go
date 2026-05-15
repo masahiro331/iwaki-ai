@@ -33,6 +33,14 @@ type Request struct {
 	Since     time.Duration
 }
 
+// Result reports the outcome of a /summarize run.
+// InputChars and MessageCount are useful for logging and quota tracking.
+type Result struct {
+	Summary      string
+	MessageCount int
+	InputChars   int
+}
+
 // HandlerConfig holds runtime knobs.
 type HandlerConfig struct {
 	MaxInputChars int
@@ -74,24 +82,28 @@ func ParseSinceArg(s string) (time.Duration, error) {
 }
 
 // Run executes the request: fetch -> verify size -> summarize.
-func (h *Handler) Run(ctx context.Context, r Request) (string, error) {
+func (h *Handler) Run(ctx context.Context, r Request) (Result, error) {
 	since := time.Now().Add(-r.Since)
 	msgs, err := h.fetcher.Fetch(ctx, r.ChannelID, since)
 	if err != nil {
-		return "", fmt.Errorf("fetch: %w", err)
+		return Result{}, fmt.Errorf("fetch: %w", err)
 	}
 	if len(msgs) == 0 {
-		return "(no messages in the given window)", nil
+		return Result{Summary: "(no messages in the given window)"}, nil
 	}
 
 	formattedLen := len(message.FormatAll(msgs))
 	if formattedLen > h.cfg.MaxInputChars {
-		return "", fmt.Errorf("formatted input %d chars exceeds limit %d", formattedLen, h.cfg.MaxInputChars)
+		return Result{}, fmt.Errorf("formatted input %d chars exceeds limit %d", formattedLen, h.cfg.MaxInputChars)
 	}
 
 	summary, err := h.summarizer.Summarize(ctx, msgs)
 	if err != nil {
-		return "", fmt.Errorf("summarize: %w", err)
+		return Result{}, fmt.Errorf("summarize: %w", err)
 	}
-	return summary, nil
+	return Result{
+		Summary:      summary,
+		MessageCount: len(msgs),
+		InputChars:   formattedLen,
+	}, nil
 }

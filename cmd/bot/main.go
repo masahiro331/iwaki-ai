@@ -102,8 +102,13 @@ func handleSummarize(s *discordgo.Session, i *discordgo.InteractionCreate, h *bo
 			sinceArg = opt.StringValue()
 		}
 	}
+	user, userID := userIdentity(i)
+	log.Printf("/summarize invoked: user=%s (id=%s) guild=%s channel=%s since=%q",
+		user, userID, i.GuildID, i.ChannelID, sinceArg)
+
 	since, err := bot.ParseSinceArg(sinceArg)
 	if err != nil {
+		log.Printf("invalid since from user=%s: %v", user, err)
 		replyEphemeral(s, i, fmt.Sprintf("invalid since: %v", err))
 		return
 	}
@@ -119,14 +124,19 @@ func handleSummarize(s *discordgo.Session, i *discordgo.InteractionCreate, h *bo
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 
-	summary, err := h.Run(ctx, bot.Request{ChannelID: i.ChannelID, Since: since})
+	start := time.Now()
+	result, err := h.Run(ctx, bot.Request{ChannelID: i.ChannelID, Since: since})
 	if err != nil {
+		log.Printf("/summarize failed for user=%s channel=%s: %v", user, i.ChannelID, err)
 		msg := fmt.Sprintf("failed: %v", err)
 		_, _ = s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Content: &msg})
 		return
 	}
+	log.Printf("/summarize succeeded for user=%s channel=%s since=%s elapsed=%s messages=%d input_chars=%d summary_chars=%d",
+		user, i.ChannelID, since, time.Since(start).Round(time.Millisecond),
+		result.MessageCount, result.InputChars, len(result.Summary))
 
-	chunks := discord.SplitForDiscord(summary, discord.DiscordMessageLimit)
+	chunks := discord.SplitForDiscord(result.Summary, discord.DiscordMessageLimit)
 	if len(chunks) == 0 {
 		empty := "(empty summary)"
 		_, _ = s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{Content: &empty})
@@ -142,6 +152,18 @@ func handleSummarize(s *discordgo.Session, i *discordgo.InteractionCreate, h *bo
 			return
 		}
 	}
+}
+
+// userIdentity returns a printable username and ID, handling both
+// guild-member and DM-style invocations.
+func userIdentity(i *discordgo.InteractionCreate) (name, id string) {
+	if i.Member != nil && i.Member.User != nil {
+		return i.Member.User.Username, i.Member.User.ID
+	}
+	if i.User != nil {
+		return i.User.Username, i.User.ID
+	}
+	return "unknown", ""
 }
 
 func replyEphemeral(s *discordgo.Session, i *discordgo.InteractionCreate, content string) {

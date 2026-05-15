@@ -82,8 +82,14 @@ func TestSummarizeRequest_HappyPath(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Run() error = %v", err)
 	}
-	if got != "summary" {
-		t.Errorf("Run() summary = %q, want %q", got, "summary")
+	if got.Summary != "summary" {
+		t.Errorf("Run() summary = %q, want %q", got.Summary, "summary")
+	}
+	if got.MessageCount != 1 {
+		t.Errorf("Run() MessageCount = %d, want 1", got.MessageCount)
+	}
+	if got.InputChars <= 0 {
+		t.Errorf("Run() InputChars = %d, want > 0", got.InputChars)
 	}
 	if f.gotChannel != "chan-1" {
 		t.Errorf("fetcher channel = %q, want chan-1", f.gotChannel)
@@ -107,8 +113,11 @@ func TestSummarizeRequest_NoMessages(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Run() error = %v", err)
 	}
-	if !strings.Contains(got, "no messages") && !strings.Contains(got, "メッセージ") {
-		t.Errorf("Run() should explain no messages, got %q", got)
+	if !strings.Contains(got.Summary, "no messages") && !strings.Contains(got.Summary, "メッセージ") {
+		t.Errorf("Run() should explain no messages, got %q", got.Summary)
+	}
+	if got.MessageCount != 0 {
+		t.Errorf("Run() MessageCount = %d, want 0", got.MessageCount)
 	}
 	if s.gotMsgs != nil {
 		t.Errorf("summarizer should not be called when no messages")
