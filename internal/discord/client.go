@@ -22,6 +22,12 @@ func NewDiscordgoAPI(token string) (*DiscordgoAPI, error) {
 	return &DiscordgoAPI{session: s}, nil
 }
 
+// NewDiscordgoAPIWithSession wraps a pre-built session, useful when the
+// caller (e.g. a Bot) needs to register handlers on it before opening.
+func NewDiscordgoAPIWithSession(s *discordgo.Session) *DiscordgoAPI {
+	return &DiscordgoAPI{session: s}
+}
+
 // PostMessage sends a plain text message to the given channel.
 func (a *DiscordgoAPI) PostMessage(ctx context.Context, channelID, content string) error {
 	_, err := a.session.ChannelMessageSend(channelID, content, discordgo.WithContext(ctx))
