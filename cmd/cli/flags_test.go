@@ -54,6 +54,39 @@ func TestParseFlags_ModelOverride(t *testing.T) {
 	}
 }
 
+func TestParseFlags_PostDefaultsOn(t *testing.T) {
+	cfg, err := parseFlags([]string{"--channel", "x"})
+	if err != nil {
+		t.Fatalf("parseFlags error = %v", err)
+	}
+	if cfg.noPost {
+		t.Errorf("post should default ON (noPost=false), got noPost=true")
+	}
+	if cfg.postTo != "" {
+		t.Errorf("postTo default should be empty, got %q", cfg.postTo)
+	}
+}
+
+func TestParseFlags_NoPost(t *testing.T) {
+	cfg, err := parseFlags([]string{"--channel", "x", "--no-post"})
+	if err != nil {
+		t.Fatalf("parseFlags error = %v", err)
+	}
+	if !cfg.noPost {
+		t.Errorf("--no-post should set noPost=true")
+	}
+}
+
+func TestParseFlags_PostTo(t *testing.T) {
+	cfg, err := parseFlags([]string{"--channel", "src", "--post-to", "dst"})
+	if err != nil {
+		t.Fatalf("parseFlags error = %v", err)
+	}
+	if cfg.postTo != "dst" {
+		t.Errorf("postTo = %q, want dst", cfg.postTo)
+	}
+}
+
 func TestParseFlags_InvalidLLM(t *testing.T) {
 	_, err := parseFlags([]string{"--channel", "x", "--llm", "gpt"})
 	if err == nil {

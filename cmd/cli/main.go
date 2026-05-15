@@ -61,5 +61,16 @@ func run(args []string) error {
 	}
 
 	fmt.Println(summary)
+
+	if cfg.noPost {
+		return nil
+	}
+	postTarget := cfg.postTo
+	if postTarget == "" {
+		postTarget = cfg.channelID
+	}
+	if err := discord.PostSummary(ctx, api, postTarget, summary, discord.DiscordMessageLimit); err != nil {
+		return fmt.Errorf("post summary to %s: %w", postTarget, err)
+	}
 	return nil
 }

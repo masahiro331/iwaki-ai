@@ -17,6 +17,8 @@ type cliConfig struct {
 	since     time.Duration
 	llm       string
 	model     string
+	noPost    bool
+	postTo    string
 }
 
 func parseFlags(args []string) (cliConfig, error) {
@@ -26,6 +28,8 @@ func parseFlags(args []string) (cliConfig, error) {
 	fs.DurationVar(&cfg.since, "since", 24*time.Hour, "How far back to look (e.g. 24h, 3h, 7d-style: 168h)")
 	fs.StringVar(&cfg.llm, "llm", llmClaudeCode, "LLM backend: claude-code (local `claude -p`), api (Anthropic API), or gemini (Google AI Studio)")
 	fs.StringVar(&cfg.model, "model", "", "Override the LLM model name (backend-specific, e.g. gemini-2.0-flash). Empty uses the backend default.")
+	fs.BoolVar(&cfg.noPost, "no-post", false, "Do not post the summary back to Discord (default is to post)")
+	fs.StringVar(&cfg.postTo, "post-to", "", "Discord channel ID to post the summary to (default: same as --channel)")
 
 	if err := fs.Parse(args); err != nil {
 		return cliConfig{}, err
