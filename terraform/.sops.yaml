@@ -1,0 +1,11 @@
+# SOPS rules. Anything matching secrets*.yaml gets encrypted with the
+# age recipients listed below; everything else is left untouched.
+#
+# Add a new operator: append their age public key to `age:` (one per
+# line, comma-separated). Rotate by removing the old key and running
+# `sops updatekeys secrets.enc.yaml`.
+
+creation_rules:
+  - path_regex: secrets.*\.yaml$
+    encrypted_regex: '^(bot_token|guild_id|api_key|tenancy_ocid|user_ocid|fingerprint|private_key_path|region)$'
+    age: REPLACE_WITH_AGE_PUBLIC_KEY

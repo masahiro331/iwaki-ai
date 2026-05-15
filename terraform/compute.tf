@@ -64,10 +64,12 @@ resource "oci_core_instance" "bot" {
   metadata = {
     ssh_authorized_keys = tls_private_key.ssh.public_key_openssh
     # cloud-init must be base64-encoded for OCI's user_data field.
+    # Secret values come straight from SOPS so they never appear in
+    # plaintext on disk under terraform/.
     user_data = base64encode(templatefile("${path.module}/cloud-init.yaml.tpl", {
-      discord_bot_token = var.discord_bot_token
-      discord_guild_id  = var.discord_guild_id
-      gemini_api_key    = var.gemini_api_key
+      discord_bot_token = data.sops_file.secrets.data["discord.bot_token"]
+      discord_guild_id  = data.sops_file.secrets.data["discord.guild_id"]
+      gemini_api_key    = data.sops_file.secrets.data["gemini.api_key"]
       repo              = var.github_repo
     }))
   }

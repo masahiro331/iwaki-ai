@@ -5,21 +5,43 @@ SSH keypair on the fly, opens port 22 to the world (by default), and
 cloud-inits the bot so that it self-installs, drops the env file, and
 enables the systemd unit.
 
+Secrets (OCI credentials + Discord/Gemini tokens) live in
+`secrets.enc.yaml`, which is SOPS-encrypted with age so the file is
+safe to commit.
+
 ## Prereqs
 
-- An OCI tenancy with the Always Free A1 capacity (1 OCPU / 6 GB is
-  enough; raise `instance_*` to grow inside the free aggregate of 4
-  OCPUs / 24 GB).
-- An OCI API key registered on your user; the five values from your
-  `~/.oci/config` need to land in `terraform.tfvars`.
+- An OCI tenancy with Always Free A1 capacity.
+- An OCI API key registered on your user.
+- `brew install sops age`
 - A Discord bot token, target guild ID, and a Gemini API key.
 
-## Use
+## One-time setup (per operator)
 
 ```bash
-cp terraform.tfvars.example terraform.tfvars
-$EDITOR terraform.tfvars   # fill in OCI auth + bot secrets
+# 1) Make an age key on this machine
+mkdir -p ~/.config/sops/age
+age-keygen -o ~/.config/sops/age/keys.txt
+# note the "Public key: age1..." line
 
+# 2) Register it as a recipient in .sops.yaml
+# Edit terraform/.sops.yaml and replace REPLACE_WITH_AGE_PUBLIC_KEY
+# with your age1... public key.
+
+# 3) Author the secrets file
+cd terraform
+cp secrets.example.yaml secrets.yaml
+$EDITOR secrets.yaml        # fill in real values
+sops --encrypt secrets.yaml > secrets.enc.yaml
+rm secrets.yaml             # keep only the encrypted copy
+
+# Subsequent edits:
+sops secrets.enc.yaml       # opens $EDITOR with the decrypted content
+```
+
+## Apply
+
+```bash
 terraform init
 terraform plan
 terraform apply
@@ -41,7 +63,7 @@ and the GoReleaser workflow publishes the binaries. Then on the VM:
 
 ```bash
 ssh -i ~/.ssh/iwaki-ai ubuntu@<public_ip>
-sudo /tmp/install.sh   # or: curl -fsSL .../scripts/update.sh | sudo bash
+sudo /tmp/install.sh   # idempotent; or use scripts/update.sh
 ```
 
 `update.sh` is idempotent and only restarts the service when the
@@ -54,4 +76,4 @@ terraform destroy
 ```
 
 Removes the VM, networking, and the local SSH key. The OCI compartment
-itself is left alone.
+and the encrypted secrets file are left alone.

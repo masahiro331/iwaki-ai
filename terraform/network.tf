@@ -4,7 +4,10 @@
 # with a permissive egress rule and a tight ingress rule is enough.
 
 locals {
-  compartment_ocid = var.compartment_ocid != "" ? var.compartment_ocid : var.tenancy_ocid
+  # Fall back to the tenancy (root compartment) when no explicit
+  # compartment is configured. tenancy_ocid is part of the SOPS-backed
+  # secrets file, not a tfvar.
+  compartment_ocid = var.compartment_ocid != "" ? var.compartment_ocid : data.sops_file.secrets.data["oci.tenancy_ocid"]
 }
 
 resource "oci_core_vcn" "main" {

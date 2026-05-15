@@ -5,3 +5,8 @@
 *.tfvars
 !*.tfvars.example
 crash.log
+
+# Plaintext SOPS inputs / scratch decrypts. Only the encrypted file
+# (secrets.enc.yaml) and the example file may live in git.
+secrets.yaml
+secrets.dec.yaml

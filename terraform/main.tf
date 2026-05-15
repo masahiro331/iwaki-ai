@@ -14,17 +14,26 @@ terraform {
       source  = "hashicorp/local"
       version = "~> 2.5"
     }
+    sops = {
+      source  = "carlpett/sops"
+      version = "~> 1.0"
+    }
   }
 }
 
-# Authenticates against OCI using the standard ~/.oci/config file by
-# default. Override individual fields via variables if a different
-# tenancy/user pair is needed.
+# Decrypt secrets.enc.yaml using the operator's age key. SOPS picks
+# the key up automatically from ~/.config/sops/age/keys.txt (or
+# SOPS_AGE_KEY_FILE for CI). All sensitive material - OCI auth, bot
+# tokens - lives inside this file; nothing secret should appear in
+# *.tfvars or in process arguments.
+data "sops_file" "secrets" {
+  source_file = "${path.module}/secrets.enc.yaml"
+}
+
 provider "oci" {
-  region              = var.region
-  tenancy_ocid        = var.tenancy_ocid
-  user_ocid           = var.user_ocid
-  fingerprint         = var.fingerprint
-  private_key_path    = var.private_key_path
-  config_file_profile = var.config_file_profile
+  region           = data.sops_file.secrets.data["oci.region"]
+  tenancy_ocid     = data.sops_file.secrets.data["oci.tenancy_ocid"]
+  user_ocid        = data.sops_file.secrets.data["oci.user_ocid"]
+  fingerprint      = data.sops_file.secrets.data["oci.fingerprint"]
+  private_key_path = pathexpand(data.sops_file.secrets.data["oci.private_key_path"])
 }
