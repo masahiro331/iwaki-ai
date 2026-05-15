@@ -64,6 +64,38 @@ terraform apply
 Outputs the public IP and an `ssh -i ...` command using the generated
 key written to `~/.ssh/iwaki-ai` by default.
 
+## Picking an instance shape
+
+The default is `VM.Standard.E2.1.Micro` (AMD, 1/8 OCPU, 1 GB RAM)
+because it's almost always available in the Always Free pool. If
+your tenancy has free Ampere A1 capacity, the bigger
+`VM.Standard.A1.Flex` is fine too - the bot itself only uses a few
+tens of MB. Override per invocation:
+
+```bash
+# AMD Always Free (default)
+terraform apply
+
+# Ampere ARM Always Free, 1 OCPU / 6 GB (commonly throws "Out of
+# host capacity" in ap-tokyo-1; retry or switch back to E2.1.Micro)
+terraform apply \
+  -var instance_shape=VM.Standard.A1.Flex \
+  -var instance_ocpus=1 \
+  -var instance_memory_gb=6
+```
+
+Or pin the choice in `terraform.tfvars`:
+
+```hcl
+instance_shape     = "VM.Standard.A1.Flex"
+instance_ocpus     = 1
+instance_memory_gb = 6
+```
+
+`instance_ocpus` and `instance_memory_gb` are ignored for fixed
+shapes like E2.1.Micro - the dynamic `shape_config` block in
+`compute.tf` only emits when the shape name ends in `.Flex`.
+
 cloud-init pulls `scripts/install.sh` from `main` on GitHub, downloads
 the latest release archive for the host arch, installs the binary at
 `/usr/local/bin/iwaki-ai-bot`, drops the env file, and starts
