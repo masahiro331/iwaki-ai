@@ -42,19 +42,36 @@ func (a *DiscordgoAPI) ChannelMessages(ctx context.Context, channelID, beforeID 
 	out := make([]RawMessage, 0, len(msgs))
 	for _, m := range msgs {
 		ts := m.Timestamp
-		author := ""
 		bot := false
 		if m.Author != nil {
-			author = m.Author.Username
 			bot = m.Author.Bot
 		}
 		out = append(out, RawMessage{
 			ID:        m.ID,
-			Author:    author,
+			Author:    displayNameFromMessage(m),
 			Content:   m.Content,
 			Timestamp: ts,
 			Bot:       bot,
 		})
 	}
 	return out, nil
+}
+
+// displayNameFromMessage picks the most human-friendly name available
+// for the author. Server nickname wins, then the account's global
+// display name, then the legacy username, then a literal "unknown"
+// so we never end up with the bare snowflake ID.
+func displayNameFromMessage(m *discordgo.Message) string {
+	if m.Member != nil && m.Member.Nick != "" {
+		return m.Member.Nick
+	}
+	if m.Author != nil {
+		if m.Author.GlobalName != "" {
+			return m.Author.GlobalName
+		}
+		if m.Author.Username != "" {
+			return m.Author.Username
+		}
+	}
+	return "unknown"
 }
