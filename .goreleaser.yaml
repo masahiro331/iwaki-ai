@@ -37,12 +37,24 @@ builds:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
 
 archives:
-  - id: default
+  # Separate archives per binary: the bot only ships for linux, while
+  # the CLI also targets darwin. Bundling both into one archive would
+  # leave darwin builds without the bot and trip GoReleaser's "same
+  # binary count per platform" check.
+  - id: bot
     builds:
       - bot
+    name_template: >-
+      {{ .ProjectName }}-bot_{{ .Version }}_{{ .Os }}_{{ .Arch }}
+    format: tar.gz
+    files:
+      - LICENSE*
+      - README*
+  - id: cli
+    builds:
       - cli
     name_template: >-
-      {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
+      {{ .ProjectName }}-cli_{{ .Version }}_{{ .Os }}_{{ .Arch }}
     format: tar.gz
     files:
       - LICENSE*

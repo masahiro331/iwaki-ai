@@ -48,7 +48,7 @@ if [[ -n "$current" && "$current" == *"$version"* ]]; then
 fi
 echo "installing $tag (was: ${current:-unknown})"
 
-asset="iwaki-ai_${version}_linux_${goarch}.tar.gz"
+asset="iwaki-ai-bot_${version}_linux_${goarch}.tar.gz"
 url="https://github.com/${REPO}/releases/download/${tag}/${asset}"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT

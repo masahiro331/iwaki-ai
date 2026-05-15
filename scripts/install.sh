@@ -49,7 +49,7 @@ version="${tag#v}"
 echo "latest tag: $tag (version $version)"
 
 # 4) Download the matching archive into a scratch dir.
-asset="iwaki-ai_${version}_linux_${goarch}.tar.gz"
+asset="iwaki-ai-bot_${version}_linux_${goarch}.tar.gz"
 url="https://github.com/${REPO}/releases/download/${tag}/${asset}"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
