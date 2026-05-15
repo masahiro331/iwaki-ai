@@ -7,6 +7,9 @@ Google's Gemini API, and posts the result back to the channel.
 Built mainly so the operator can catch up on busy channels without
 scrolling.
 
+> Looking for the user-facing Bot guide in 日本語? See
+> [README.ja.md](README.ja.md).
+
 ## What's here
 
 ```
