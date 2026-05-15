@@ -13,7 +13,7 @@ import (
 
 const (
 	defaultGeminiBaseURL = "https://generativelanguage.googleapis.com/v1beta"
-	defaultGeminiModel   = "gemini-1.5-flash"
+	defaultGeminiModel   = "gemini-2.5-flash"
 )
 
 // GeminiClient calls Google AI Studio's generateContent API and satisfies LLMClient.

@@ -16,6 +16,7 @@ type cliConfig struct {
 	channelID string
 	since     time.Duration
 	llm       string
+	model     string
 }
 
 func parseFlags(args []string) (cliConfig, error) {
@@ -24,6 +25,7 @@ func parseFlags(args []string) (cliConfig, error) {
 	fs.StringVar(&cfg.channelID, "channel", "", "Discord channel ID to summarize (required)")
 	fs.DurationVar(&cfg.since, "since", 24*time.Hour, "How far back to look (e.g. 24h, 3h, 7d-style: 168h)")
 	fs.StringVar(&cfg.llm, "llm", llmClaudeCode, "LLM backend: claude-code (local `claude -p`), api (Anthropic API), or gemini (Google AI Studio)")
+	fs.StringVar(&cfg.model, "model", "", "Override the LLM model name (backend-specific, e.g. gemini-2.0-flash). Empty uses the backend default.")
 
 	if err := fs.Parse(args); err != nil {
 		return cliConfig{}, err

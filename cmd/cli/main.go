@@ -29,7 +29,7 @@ func run(args []string) error {
 		return errors.New("DISCORD_BOT_TOKEN env var is required")
 	}
 
-	llm, err := buildLLM(cfg.llm)
+	llm, err := buildLLM(cfg)
 	if err != nil {
 		return err
 	}

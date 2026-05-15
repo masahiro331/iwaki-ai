@@ -39,6 +39,19 @@ func TestParseFlags_LLMGemini(t *testing.T) {
 	if cfg.llm != llmGemini {
 		t.Errorf("llm = %q, want %q", cfg.llm, llmGemini)
 	}
+	if cfg.model != "" {
+		t.Errorf("model default should be empty (use library default), got %q", cfg.model)
+	}
+}
+
+func TestParseFlags_ModelOverride(t *testing.T) {
+	cfg, err := parseFlags([]string{"--channel", "x", "--llm", "gemini", "--model", "gemini-2.0-flash"})
+	if err != nil {
+		t.Fatalf("parseFlags error = %v", err)
+	}
+	if cfg.model != "gemini-2.0-flash" {
+		t.Errorf("model = %q, want gemini-2.0-flash", cfg.model)
+	}
 }
 
 func TestParseFlags_InvalidLLM(t *testing.T) {

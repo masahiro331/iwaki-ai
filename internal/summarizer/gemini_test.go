@@ -32,7 +32,7 @@ func TestGeminiClient_Complete_Success(t *testing.T) {
 
 	c := NewGeminiClient("test-key",
 		WithGeminiBaseURL(srv.URL),
-		WithGeminiModel("gemini-1.5-flash"),
+		WithGeminiModel("gemini-2.5-flash"),
 	)
 
 	got, err := c.Complete(context.Background(), "hello")
@@ -42,7 +42,7 @@ func TestGeminiClient_Complete_Success(t *testing.T) {
 	if got != "summary result" {
 		t.Errorf("Complete() = %q, want %q", got, "summary result")
 	}
-	if !strings.Contains(gotPath, "gemini-1.5-flash") {
+	if !strings.Contains(gotPath, "gemini-2.5-flash") {
 		t.Errorf("path should include model name, got %q", gotPath)
 	}
 	if !strings.Contains(gotPath, "generateContent") {
@@ -53,6 +53,23 @@ func TestGeminiClient_Complete_Success(t *testing.T) {
 	}
 	if len(gotReq.Contents) != 1 || len(gotReq.Contents[0].Parts) != 1 || gotReq.Contents[0].Parts[0].Text != "hello" {
 		t.Errorf("request body = %+v, want single content with prompt", gotReq)
+	}
+}
+
+func TestGeminiClient_DefaultModel(t *testing.T) {
+	var gotPath string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		gotPath = r.URL.Path
+		_, _ = w.Write([]byte(`{"candidates":[{"content":{"parts":[{"text":"x"}]}}]}`))
+	}))
+	defer srv.Close()
+
+	c := NewGeminiClient("k", WithGeminiBaseURL(srv.URL))
+	if _, err := c.Complete(context.Background(), "x"); err != nil {
+		t.Fatalf("Complete() error = %v", err)
+	}
+	if !strings.Contains(gotPath, "gemini-2.5-flash") {
+		t.Errorf("default model path should contain gemini-2.5-flash, got %q", gotPath)
 	}
 }
 
