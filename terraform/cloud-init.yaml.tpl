@@ -20,6 +20,19 @@ write_files:
       DISCORD_GUILD_ID=${discord_guild_id}
       GEMINI_API_KEY=${gemini_api_key}
 
+  # Force pubkey-only SSH. Cloud images already lean this way, but a
+  # drop-in under sshd_config.d makes it explicit and survives base
+  # image changes.
+  - path: /etc/ssh/sshd_config.d/10-iwaki-ai-hardening.conf
+    permissions: '0644'
+    owner: root:root
+    content: |
+      PasswordAuthentication no
+      ChallengeResponseAuthentication no
+      KbdInteractiveAuthentication no
+      PermitRootLogin no
+      PubkeyAuthentication yes
+
 runcmd:
   # Fetch the install.sh that lives in the repo. Using the script
   # directly off main avoids having to package it into the release
@@ -33,3 +46,5 @@ runcmd:
   - chown root:iwaki-ai /etc/iwaki-ai/iwaki-ai.env
   - chmod 0640 /etc/iwaki-ai/iwaki-ai.env
   - systemctl enable --now iwaki-ai-bot.service
+  # Apply the hardened sshd drop-in. Existing sessions stay alive.
+  - systemctl reload ssh || systemctl reload sshd
