@@ -20,6 +20,12 @@ func buildLLM(kind string) (summarizer.LLMClient, error) {
 			return nil, fmt.Errorf("ANTHROPIC_API_KEY env var is required when --llm=%s", llmAPI)
 		}
 		return summarizer.NewClaudeClient(apiKey), nil
+	case llmGemini:
+		apiKey := os.Getenv("GEMINI_API_KEY")
+		if apiKey == "" {
+			return nil, fmt.Errorf("GEMINI_API_KEY env var is required when --llm=%s", llmGemini)
+		}
+		return summarizer.NewGeminiClient(apiKey), nil
 	default:
 		return nil, fmt.Errorf("unknown llm kind: %q", kind)
 	}

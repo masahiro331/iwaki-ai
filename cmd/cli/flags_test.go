@@ -31,6 +31,16 @@ func TestParseFlags_LLMAPI(t *testing.T) {
 	}
 }
 
+func TestParseFlags_LLMGemini(t *testing.T) {
+	cfg, err := parseFlags([]string{"--channel", "x", "--llm", "gemini"})
+	if err != nil {
+		t.Fatalf("parseFlags error = %v", err)
+	}
+	if cfg.llm != llmGemini {
+		t.Errorf("llm = %q, want %q", cfg.llm, llmGemini)
+	}
+}
+
 func TestParseFlags_InvalidLLM(t *testing.T) {
 	_, err := parseFlags([]string{"--channel", "x", "--llm", "gpt"})
 	if err == nil {
