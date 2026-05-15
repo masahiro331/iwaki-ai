@@ -73,14 +73,12 @@ EOF
   echo "created blank ${ENV_FILE}; edit it to add real secrets before starting the service"
 fi
 
-# 7) Install/refresh the systemd unit.
-script_dir="$(cd "$(dirname "$0")" && pwd)"
-unit_src="${script_dir}/../deploy/systemd/${SERVICE_NAME}"
-if [[ ! -f "$unit_src" ]]; then
-  echo "systemd unit not found at $unit_src" >&2
-  exit 1
-fi
-install -m 0644 "$unit_src" "$SERVICE_PATH"
+# 7) Install/refresh the systemd unit. The unit lives in the repo under
+#    terraform/deploy/systemd/, so it's fetched directly (the script
+#    itself was also curl'd here, so we can't assume a repo checkout).
+unit_url="https://raw.githubusercontent.com/${REPO}/main/terraform/deploy/systemd/${SERVICE_NAME}"
+curl -fsSL -o "$SERVICE_PATH" "$unit_url"
+chmod 0644 "$SERVICE_PATH"
 systemctl daemon-reload
 
 echo "install complete."

@@ -19,9 +19,9 @@ internal/
   message/    Common Message type + prompt formatting
   summarizer/ LLMClient interface plus Claude/Gemini/Claude-Code impls,
               retry-with-fallback wrapper
-deploy/       systemd unit + env-file template for the VM install
 scripts/      install.sh / update.sh helpers run on the VM
-terraform/    Oracle Cloud Always Free provisioning (see its README)
+terraform/    Oracle Cloud Always Free provisioning (see its README);
+              also hosts deploy/systemd/ unit file fetched by install.sh
 ```
 
 ## CLI
