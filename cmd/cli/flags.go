@@ -28,7 +28,7 @@ type cliConfig struct {
 }
 
 func parseFlags(args []string) (cliConfig, error) {
-	fs := flag.NewFlagSet("discord-ai-cli", flag.ContinueOnError)
+	fs := flag.NewFlagSet("iwaki-ai-cli", flag.ContinueOnError)
 	var cfg cliConfig
 	fs.StringVar(&cfg.channelID, "channel", "", "Discord channel ID to summarize (required)")
 	fs.DurationVar(&cfg.since, "since", 24*time.Hour, "How far back to look (e.g. 24h, 3h, 7d-style: 168h)")

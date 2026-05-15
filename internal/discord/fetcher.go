@@ -7,7 +7,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/masahiro331/discord-ai/internal/message"
+	"github.com/masahiro331/iwaki-ai/internal/message"
 )
 
 // defaultPageLimit is the maximum number of messages requested per API call.

@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/masahiro331/discord-ai/internal/message"
+	"github.com/masahiro331/iwaki-ai/internal/message"
 )
 
 // ErrNoMessages is returned when there is nothing to summarize.

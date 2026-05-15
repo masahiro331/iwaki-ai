@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/masahiro331/discord-ai/internal/message"
+	"github.com/masahiro331/iwaki-ai/internal/message"
 )
 
 // DefaultSinceArg is applied when the user omits the option.

@@ -13,16 +13,16 @@ tidy:
 	go mod tidy
 
 build:
-	go build -o bin/discord-ai-cli ./cmd/cli
+	go build -o bin/iwaki-ai-cli ./cmd/cli
 
 build-bot:
-	go build -o bin/discord-ai-bot ./cmd/bot
+	go build -o bin/iwaki-ai-bot ./cmd/bot
 
 # Cross-compile for Oracle Cloud A1 (Ampere Arm64) instances.
 # CGO is disabled so the binary runs on a minimal Ubuntu image.
 build-bot-linux-arm64:
 	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
-		go build -o bin/discord-ai-bot-linux-arm64 ./cmd/bot
+		go build -o bin/iwaki-ai-bot-linux-arm64 ./cmd/bot
 
 run-cli:
 	go run ./cmd/cli $(ARGS)

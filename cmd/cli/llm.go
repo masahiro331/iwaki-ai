@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/masahiro331/discord-ai/internal/summarizer"
+	"github.com/masahiro331/iwaki-ai/internal/summarizer"
 )
 
 // buildLLM constructs an LLMClient based on the CLI configuration.

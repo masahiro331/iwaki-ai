@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/masahiro331/discord-ai/internal/message"
+	"github.com/masahiro331/iwaki-ai/internal/message"
 )
 
 type fakeLLM struct {

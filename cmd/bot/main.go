@@ -12,9 +12,9 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 
-	"github.com/masahiro331/discord-ai/internal/bot"
-	"github.com/masahiro331/discord-ai/internal/discord"
-	"github.com/masahiro331/discord-ai/internal/summarizer"
+	"github.com/masahiro331/iwaki-ai/internal/bot"
+	"github.com/masahiro331/iwaki-ai/internal/discord"
+	"github.com/masahiro331/iwaki-ai/internal/summarizer"
 )
 
 const summarizeCmdName = "summarize"

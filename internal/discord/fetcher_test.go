@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/masahiro331/discord-ai/internal/message"
+	"github.com/masahiro331/iwaki-ai/internal/message"
 )
 
 // fakeAPI returns canned messages in a single page (or splits if you want).

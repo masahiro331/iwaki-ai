@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/masahiro331/discord-ai/internal/discord"
-	"github.com/masahiro331/discord-ai/internal/message"
-	"github.com/masahiro331/discord-ai/internal/summarizer"
+	"github.com/masahiro331/iwaki-ai/internal/discord"
+	"github.com/masahiro331/iwaki-ai/internal/message"
+	"github.com/masahiro331/iwaki-ai/internal/summarizer"
 )
 
 func main() {

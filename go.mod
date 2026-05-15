@@ -1,4 +1,4 @@
-module github.com/masahiro331/discord-ai
+module github.com/masahiro331/iwaki-ai
 
 go 1.25.7
 
