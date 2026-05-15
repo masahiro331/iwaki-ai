@@ -1,0 +1,16 @@
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+*.tfvars
+!*.tfvars.example
+crash.log
+
+# Plaintext SOPS inputs / scratch decrypts. Only the example file
+# may live in git.
+secrets.yaml
+secrets.dec.yaml
+# Keep the encrypted file out of git for now too, while the
+# encryption setup is still settling. Once recipients and rotation
+# practice are stable, remove this line so the file can be committed.
+secrets.enc.yaml
