@@ -111,7 +111,11 @@ func (c *GeminiClient) Complete(ctx context.Context, prompt string) (string, err
 		return "", fmt.Errorf("read response: %w", err)
 	}
 	if resp.StatusCode >= 400 {
-		return "", fmt.Errorf("gemini api status %d: %s", resp.StatusCode, string(raw))
+		err := fmt.Errorf("gemini api status %d: %s", resp.StatusCode, string(raw))
+		if isRetryableStatus(resp.StatusCode) {
+			return "", &RetryableError{Cause: err}
+		}
+		return "", err
 	}
 
 	var parsed geminiResponse

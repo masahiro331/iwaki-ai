@@ -89,6 +89,43 @@ func TestGeminiClient_Complete_APIError(t *testing.T) {
 	if !strings.Contains(err.Error(), "429") {
 		t.Errorf("error should mention status, got: %v", err)
 	}
+	if !IsRetryable(err) {
+		t.Errorf("429 should be retryable, got %v", err)
+	}
+}
+
+func TestGeminiClient_Complete_RetryableOn503(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusServiceUnavailable)
+		_, _ = w.Write([]byte(`{"error":{"code":503,"message":"overloaded"}}`))
+	}))
+	defer srv.Close()
+
+	c := NewGeminiClient("k", WithGeminiBaseURL(srv.URL))
+	_, err := c.Complete(context.Background(), "x")
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+	if !IsRetryable(err) {
+		t.Errorf("503 should be retryable, got %v", err)
+	}
+}
+
+func TestGeminiClient_Complete_NotRetryableOn400(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte(`{"error":{"code":400,"message":"bad input"}}`))
+	}))
+	defer srv.Close()
+
+	c := NewGeminiClient("k", WithGeminiBaseURL(srv.URL))
+	_, err := c.Complete(context.Background(), "x")
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+	if IsRetryable(err) {
+		t.Errorf("400 should NOT be retryable, got %v", err)
+	}
 }
 
 func TestGeminiClient_Complete_EmptyCandidates(t *testing.T) {

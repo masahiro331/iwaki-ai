@@ -49,7 +49,14 @@ func run() error {
 
 	api := discord.NewDiscordgoAPIWithSession(session)
 	fetcher := discord.NewFetcher(api)
-	llm := summarizer.NewGeminiClient(apiKey)
+
+	primary := summarizer.NewGeminiClient(apiKey) // gemini-2.5-flash by default
+	fallback := summarizer.NewGeminiClient(apiKey, summarizer.WithGeminiModel("gemini-2.0-flash"))
+	llm := summarizer.NewRetryClient(primary, summarizer.RetryConfig{
+		MaxAttempts: 3,
+		BaseDelay:   1 * time.Second,
+		Fallback:    fallback,
+	})
 	sum := summarizer.New(llm)
 
 	handler := bot.NewHandler(fetcher, sum, bot.HandlerConfig{MaxInputChars: 100000})
