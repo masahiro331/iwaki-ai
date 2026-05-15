@@ -23,17 +23,13 @@ terraform {
 
 # Decrypt secrets.enc.yaml using the operator's age key. SOPS picks
 # the key up automatically from ~/.config/sops/age/keys.txt (or
-# SOPS_AGE_KEY_FILE for CI). All sensitive material - OCI auth, bot
-# tokens - lives inside this file; nothing secret should appear in
-# *.tfvars or in process arguments.
+# SOPS_AGE_KEY_FILE for CI). Only Discord/Gemini secrets live here;
+# OCI authentication is read from ~/.oci/config so it can be shared
+# with the OCI CLI without going through SOPS.
 data "sops_file" "secrets" {
   source_file = "${path.module}/secrets.enc.yaml"
 }
 
 provider "oci" {
-  region           = data.sops_file.secrets.data["oci.region"]
-  tenancy_ocid     = data.sops_file.secrets.data["oci.tenancy_ocid"]
-  user_ocid        = data.sops_file.secrets.data["oci.user_ocid"]
-  fingerprint      = data.sops_file.secrets.data["oci.fingerprint"]
-  private_key_path = pathexpand(data.sops_file.secrets.data["oci.private_key_path"])
+  config_file_profile = var.oci_config_profile
 }

@@ -1,6 +1,18 @@
-# Operator-facing knobs only. Anything secret lives in secrets.enc.yaml
-# (encrypted with SOPS+age) and is read through data.sops_file.secrets
-# in main.tf.
+# Operator-facing knobs only. Bot/AI secrets live in secrets.enc.yaml
+# (SOPS+age) and are read through data.sops_file.secrets in main.tf.
+# OCI credentials are sourced from ~/.oci/config so the same profile
+# works for the OCI CLI and Terraform.
+
+variable "oci_config_profile" {
+  description = "Profile in ~/.oci/config to use for authentication."
+  type        = string
+  default     = "DEFAULT"
+}
+
+variable "tenancy_ocid" {
+  description = "OCI tenancy OCID. Used as the default compartment when compartment_ocid is empty. Lookup via `oci iam compartment list` or the OCI console."
+  type        = string
+}
 
 variable "compartment_ocid" {
   description = "Compartment OCID. Defaults to the tenancy (root compartment)."

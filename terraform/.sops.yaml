@@ -7,5 +7,5 @@
 
 creation_rules:
   - path_regex: secrets.*\.yaml$
-    encrypted_regex: '^(bot_token|guild_id|api_key|tenancy_ocid|user_ocid|fingerprint|private_key_path|region)$'
-    age: REPLACE_WITH_AGE_PUBLIC_KEY
+    encrypted_regex: '^(bot_token|guild_id|api_key)$'
+    age: age19zux7uv750p4cux0349cwkjea53jz04chys5nhjvkq4v3nsx2eash9mw8d

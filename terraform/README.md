@@ -5,14 +5,16 @@ SSH keypair on the fly, opens port 22 to the world (by default), and
 cloud-inits the bot so that it self-installs, drops the env file, and
 enables the systemd unit.
 
-Secrets (OCI credentials + Discord/Gemini tokens) live in
-`secrets.enc.yaml`, which is SOPS-encrypted with age so the file is
-safe to commit.
+Bot/AI secrets (Discord token, Gemini key) live in `secrets.enc.yaml`,
+which is SOPS-encrypted with age so the file is safe to commit. OCI
+credentials are read from `~/.oci/config` and shared with the OCI CLI
+rather than duplicated here.
 
 ## Prereqs
 
 - An OCI tenancy with Always Free A1 capacity.
-- An OCI API key registered on your user.
+- `~/.oci/config` set up (the OCI CLI quickstart covers this) and the
+  matching API key registered on your user.
 - `brew install sops age`
 - A Discord bot token, target guild ID, and a Gemini API key.
 
@@ -25,13 +27,13 @@ age-keygen -o ~/.config/sops/age/keys.txt
 # note the "Public key: age1..." line
 
 # 2) Register it as a recipient in .sops.yaml
-# Edit terraform/.sops.yaml and replace REPLACE_WITH_AGE_PUBLIC_KEY
-# with your age1... public key.
+# Edit terraform/.sops.yaml and replace the placeholder with your
+# age1... public key. Existing operators rotate via `sops updatekeys`.
 
 # 3) Author the secrets file
 cd terraform
 cp secrets.example.yaml secrets.yaml
-$EDITOR secrets.yaml        # fill in real values
+$EDITOR secrets.yaml        # fill in discord/gemini values
 sops --encrypt secrets.yaml > secrets.enc.yaml
 rm secrets.yaml             # keep only the encrypted copy
 
@@ -41,9 +43,20 @@ sops secrets.enc.yaml       # opens $EDITOR with the decrypted content
 
 ## Apply
 
+`tenancy_ocid` is the only OCI value Terraform needs explicitly (used
+as the default compartment for resources). Grab it from
+`~/.oci/config` or the OCI console and pass it as a var:
+
 ```bash
 terraform init
-terraform plan
+terraform plan  -var tenancy_ocid=ocid1.tenancy.oc1..xxx
+terraform apply -var tenancy_ocid=ocid1.tenancy.oc1..xxx
+```
+
+Or stash it in `terraform.tfvars` (gitignored):
+
+```bash
+echo 'tenancy_ocid = "ocid1.tenancy.oc1..xxx"' > terraform.tfvars
 terraform apply
 ```
 
