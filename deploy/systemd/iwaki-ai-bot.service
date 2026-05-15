@@ -1,0 +1,31 @@
+[Unit]
+Description=Iwaki AI Discord summarizer bot
+Documentation=https://github.com/masahiro331/iwaki-ai
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=iwaki-ai
+Group=iwaki-ai
+EnvironmentFile=/etc/iwaki-ai/iwaki-ai.env
+ExecStart=/usr/local/bin/iwaki-ai-bot
+Restart=on-failure
+RestartSec=5s
+# Don't restart in a tight loop if the binary is broken
+StartLimitBurst=5
+StartLimitIntervalSec=60
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

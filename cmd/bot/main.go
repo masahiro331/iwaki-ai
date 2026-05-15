@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -19,7 +20,21 @@ import (
 
 const summarizeCmdName = "summarize"
 
+// version is set at build time via -ldflags (see .goreleaser.yaml).
+// It defaults to "dev" for un-stamped local builds.
+var (
+	version = "dev"
+	commit  = ""
+	date    = ""
+)
+
 func main() {
+	showVersion := flag.Bool("version", false, "print version and exit")
+	flag.Parse()
+	if *showVersion {
+		fmt.Printf("iwaki-ai-bot %s (commit %s, built %s)\n", version, commit, date)
+		return
+	}
 	if err := run(); err != nil {
 		log.Fatalf("error: %v", err)
 	}
