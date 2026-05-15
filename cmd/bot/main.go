@@ -92,7 +92,7 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("register command: %w", err)
 	}
-	log.Printf("registered /%s on guild %s", registered.Name, guildID)
+	log.Printf("registered slash command name=%q guild=%q", registered.Name, guildID)
 
 	log.Println("bot is running. Ctrl+C to stop.")
 	stop := make(chan os.Signal, 1)

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -135,5 +136,5 @@ func (c *ClaudeClient) Complete(ctx context.Context, prompt string) (string, err
 			return blk.Text, nil
 		}
 	}
-	return "", fmt.Errorf("claude api: empty text content")
+	return "", errors.New("claude api: empty text content")
 }

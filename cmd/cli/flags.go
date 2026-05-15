@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"time"
@@ -42,16 +43,16 @@ func parseFlags(args []string) (cliConfig, error) {
 		return cliConfig{}, err
 	}
 	if cfg.channelID == "" {
-		return cliConfig{}, fmt.Errorf("--channel is required")
+		return cliConfig{}, errors.New("--channel is required")
 	}
 	if cfg.since <= 0 {
-		return cliConfig{}, fmt.Errorf("--since must be positive")
+		return cliConfig{}, errors.New("--since must be positive")
 	}
 	if cfg.since > cfg.maxSince {
 		return cliConfig{}, fmt.Errorf("--since %s exceeds --max-since %s; raise --max-since to override", cfg.since, cfg.maxSince)
 	}
 	if cfg.maxInputChars <= 0 {
-		return cliConfig{}, fmt.Errorf("--max-input-chars must be positive")
+		return cliConfig{}, errors.New("--max-input-chars must be positive")
 	}
 	switch cfg.llm {
 	case llmClaudeCode, llmAPI, llmGemini:

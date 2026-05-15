@@ -3,7 +3,6 @@ package discord
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -42,7 +41,7 @@ func (a *DiscordgoAPI) ChannelMessages(ctx context.Context, channelID, beforeID 
 	}
 	out := make([]RawMessage, 0, len(msgs))
 	for _, m := range msgs {
-		ts := time.Time(m.Timestamp)
+		ts := m.Timestamp
 		author := ""
 		bot := false
 		if m.Author != nil {

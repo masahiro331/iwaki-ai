@@ -3,6 +3,7 @@ package summarizer
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"os/exec"
 	"strings"
@@ -54,7 +55,7 @@ func (c *ClaudeCodeClient) Complete(ctx context.Context, prompt string) (string,
 	}
 	trimmed := strings.TrimSpace(out)
 	if trimmed == "" {
-		return "", fmt.Errorf("claude -p returned empty output")
+		return "", errors.New("claude -p returned empty output")
 	}
 	return trimmed, nil
 }

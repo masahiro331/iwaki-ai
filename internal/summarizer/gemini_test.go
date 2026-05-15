@@ -74,7 +74,7 @@ func TestGeminiClient_DefaultModel(t *testing.T) {
 }
 
 func TestGeminiClient_Complete_APIError(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusTooManyRequests)
 		_, _ = w.Write([]byte(`{"error":{"code":429,"message":"quota"}}`))
 	}))
@@ -95,7 +95,7 @@ func TestGeminiClient_Complete_APIError(t *testing.T) {
 }
 
 func TestGeminiClient_Complete_RetryableOn503(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusServiceUnavailable)
 		_, _ = w.Write([]byte(`{"error":{"code":503,"message":"overloaded"}}`))
 	}))
@@ -112,7 +112,7 @@ func TestGeminiClient_Complete_RetryableOn503(t *testing.T) {
 }
 
 func TestGeminiClient_Complete_NotRetryableOn400(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte(`{"error":{"code":400,"message":"bad input"}}`))
 	}))
@@ -129,7 +129,7 @@ func TestGeminiClient_Complete_NotRetryableOn400(t *testing.T) {
 }
 
 func TestGeminiClient_Complete_EmptyCandidates(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(`{"candidates":[]}`))
 	}))
 	defer srv.Close()

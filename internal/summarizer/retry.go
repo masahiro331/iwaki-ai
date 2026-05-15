@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// RetryConfig tunes the retry/fallback behaviour of RetryClient.
+// RetryConfig tunes the retry/fallback behavior of RetryClient.
 type RetryConfig struct {
 	MaxAttempts int           // total attempts against the primary client (>=1)
 	BaseDelay   time.Duration // first backoff delay; doubles each retry

@@ -56,7 +56,7 @@ func TestClaudeClient_Complete_Success(t *testing.T) {
 }
 
 func TestClaudeClient_Complete_APIError(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(`{"error":{"type":"server_error","message":"boom"}}`))
 	}))
@@ -74,7 +74,7 @@ func TestClaudeClient_Complete_APIError(t *testing.T) {
 }
 
 func TestClaudeClient_Complete_EmptyContent(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(`{"content":[]}`))
 	}))
 	defer srv.Close()

@@ -38,7 +38,7 @@ func SplitForDiscord(text string, limit int) []string {
 		// joining newline when the buffer is non-empty.
 		extra := len(line)
 		if current.Len() > 0 {
-			extra += 1 // newline separator
+			extra++ // newline separator
 		}
 		if current.Len()+extra > limit {
 			flush()

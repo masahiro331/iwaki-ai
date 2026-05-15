@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -126,7 +127,7 @@ func (c *GeminiClient) Complete(ctx context.Context, prompt string) (string, err
 		return "", fmt.Errorf("gemini api error: %s", parsed.Error.Message)
 	}
 	if len(parsed.Candidates) == 0 || len(parsed.Candidates[0].Content.Parts) == 0 {
-		return "", fmt.Errorf("gemini api: empty candidates")
+		return "", errors.New("gemini api: empty candidates")
 	}
 	return parsed.Candidates[0].Content.Parts[0].Text, nil
 }
