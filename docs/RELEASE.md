@@ -17,8 +17,11 @@ The workflow runs in ~2 minutes and uploads:
 
 - `iwaki-ai-bot_<version>_linux_amd64.tar.gz`
 - `iwaki-ai-bot_<version>_linux_arm64.tar.gz`
-- `iwaki-ai-cli_<version>_{linux,darwin}_{amd64,arm64}.tar.gz`
 - `checksums.txt`
+
+The CLI binary (`./cmd/cli`) is not part of the release; it's a
+developer-only tool and `make build` / `go run ./cmd/cli` cover the
+local-debug use case.
 
 `scripts/install.sh` on the VM auto-detects the host architecture
 and downloads the matching `iwaki-ai-bot_*` archive from the
