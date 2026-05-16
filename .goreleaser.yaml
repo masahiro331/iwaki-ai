@@ -20,41 +20,13 @@ builds:
       - -trimpath
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
-  - id: cli
-    binary: iwaki-ai-cli
-    main: ./cmd/cli
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - linux
-      - darwin
-    goarch:
-      - amd64
-      - arm64
-    flags:
-      - -trimpath
-    ldflags:
-      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
 
 archives:
-  # Separate archives per binary: the bot only ships for linux, while
-  # the CLI also targets darwin. Bundling both into one archive would
-  # leave darwin builds without the bot and trip GoReleaser's "same
-  # binary count per platform" check.
   - id: bot
     builds:
       - bot
     name_template: >-
       {{ .ProjectName }}-bot_{{ .Version }}_{{ .Os }}_{{ .Arch }}
-    format: tar.gz
-    files:
-      - LICENSE*
-      - README*
-  - id: cli
-    builds:
-      - cli
-    name_template: >-
-      {{ .ProjectName }}-cli_{{ .Version }}_{{ .Os }}_{{ .Arch }}
     format: tar.gz
     files:
       - LICENSE*
